@@ -51,10 +51,18 @@ decrementQty: (state, action)=>{
     } else {
 item.quantity --;
     }
+},
+
+addUser:(state,action)=>{
+    state.userInfo = action.payload;
+},
+
+removeUser:(state)=>{
+    state.userInfo = null;
 }
 
     },
 });
 
-export const {addToCart, deleteItem, resetCart, incrementQty, decrementQty} = reduxslice.actions;
+export const {addToCart, deleteItem, resetCart, incrementQty, decrementQty, addUser, removeUser} = reduxslice.actions;
 export default reduxslice.reducer;

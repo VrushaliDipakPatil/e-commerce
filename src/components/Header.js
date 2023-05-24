@@ -6,6 +6,7 @@ import { useSelector } from '../../node_modules/react-redux/es/index'
 const Header = () => {
 
 const cartitem = useSelector((state)=> state?.slice?.productData)
+const user = useSelector((state)=> state?.slice?.userInfo)
 
   return (
     <div className='w-full h-20 bg-white border-b-[1px] border-b-gray-800 sticky top-0 z-50'>
@@ -40,8 +41,12 @@ const cartitem = useSelector((state)=> state?.slice?.productData)
       justify-center font-semibold'>{cartitem?.length}</span>
     </div>
     </Link>
-    <img src="https://images.pexels.com/photos/264547/pexels-photo-264547.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+   <Link to="/login">
+   <img src={user? user.image : "https://cdn-icons-png.flaticon.com/512/634/634012.png?w=740&t=st=1684900985~exp=1684901585~hmac=95b15207580ef3f5552d28e7528782e888b723c4a53527d25a8979e24b145cda"}
     className='w-8 h-8 rounded-full' alt="userLogo" />
+   </Link>
+   {user && <p className='text-base font-semibold underline underline-offset-2'
+   >{user.name}</p>}
 </div>
 </div>
 
