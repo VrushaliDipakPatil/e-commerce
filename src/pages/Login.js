@@ -28,7 +28,7 @@ const Login = () => {
         },1500)
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
       });
   };
 
@@ -39,7 +39,7 @@ const Login = () => {
         toast.success("Log Out Successfully")
     })
     .catch((error)=>{
-        console.log(error)
+        // console.log(error)
     })
   };
 
