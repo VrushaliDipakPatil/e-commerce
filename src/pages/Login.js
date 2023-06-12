@@ -1,110 +1,110 @@
-import React from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import React, { useState } from "react";
+import bcrypt from 'bcryptjs';
 import { ToastContainer, toast } from 'react-toastify';
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
-import { addUser, removeUser } from "../redux/ReduxSlice";
-import { useDispatch } from "../../node_modules/react-redux/es/exports";
 import { useNavigate } from "../../node_modules/react-router-dom/dist/index";
+import { useDispatch } from "../../node_modules/react-redux/es/exports";
+import { addUser } from "../redux/ReduxSlice";
 
 const Login = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-  const auth = getAuth();
-  const provider = new GoogleAuthProvider();
-  const handleGoogleLogin = (e) => {
-    e.preventDefault();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        const user = result.user;
-        dispatch(addUser({
-            _id:user.uid,
-            name:user.displayName,
-            email:user.email,
-            image:user.photoURL,
-        }));
-        setTimeout(()=>{
-            navigate("/")
-        },1500)
-      })
-      .catch((error) => {
-        // console.log(error);
-      });
-  };
+const dispatch = useDispatch()
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate()
+ 
 
-  const handleSignOut = () =>{
-    signOut(auth)
-    .then(()=>{
-        dispatch(removeUser())
-        toast.success("Log Out Successfully")
-    })
-    .catch((error)=>{
-        // console.log(error)
-    })
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const saltRounds = 10; // The number of salt rounds for hashing (can be adjusted based on security requirements)
+
+    try {
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+  
+      const userData = {
+        name,
+        email,
+        hashedPassword,
+      };
+      localStorage.setItem('userData', JSON.stringify(userData));
+      dispatch(addUser(userData))
+      navigate('/');
+    } catch (error) {
+      console.error('Error encrypting password:', error);
+    }
   };
+ 
 
   return (
     <>
-      <Header />
-      <div className="w-full flex flex-col items-center justify-center gap-10 py-20">
-        <div className="w-full flex items-center justify-center gap-10">
-          <div
-            onClick={handleGoogleLogin}
-            className="text-base w-60 h-12 tracking-wide border-[1px] border-gray-400
-   rounded-md flex items-center justify-center gap-2 hover:border-blue-600
-   cursor-pointer duration-300"
-          >
-            <img
-              className="w-8"
-              src="https://cdn-icons-png.flaticon.com/512/300/300221.png?w=740&t=st=1684865452~exp=1684866052~hmac=056c7515625a3774e494b6641eed445e30aaa386f5737bb0f98fdc700f723a20"
-              alt="googleImg"
-            />
-            <span className="text-sm text-gray-900"> Sign in with Google</span>
-          </div>
-          <button
-           onClick={handleSignOut}
-            className="bg-black text-white text-base py-3 px-8 tracking0wide
-   rounded-md hover:bg-gray-800 duration-300"
-          >
-            Sign Out
-          </button>
+
+<div className="fixed inset-0 flex items-center justify-center bg-opacity-50 bg-black">
+      <div className="relative">
+        <div className="absolute inset-0 bg-gray-500 bg-opacity-50 z-10"></div>
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+        ></div>
+        <div className="relative bg-white p-8 rounded-lg shadow-lg z-20">
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-6">Create an Account</h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="name" className="block font-medium text-gray-700">
+                Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="w-full bg-transparent border border-gray-300 rounded-md p-2"
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="block font-medium text-gray-700">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full bg-transparent border border-gray-300 rounded-md p-2"
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="block font-medium text-gray-700">
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full bg-transparent border border-gray-300 rounded-md p-2"
+              />
+            </div>
+            <div>
+              <button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md"
+              >
+                Register
+              </button>
+              <button
+                type="button"
+                // onClick={onClose}
+                className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded-md ml-4"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
         </div>
-        <div className="w-full flex items-center justify-center gap-10">
-          <div
-            className="text-base w-60 h-12 tracking-wide border-[1px] border-gray-400
-   rounded-md flex items-center justify-center gap-2 hover:border-blue-600
-   cursor-pointer duration-300"
-          >
-            <img
-              className="w-8"
-              src="https://img.icons8.com/?size=512&id=12599&format=png"
-              alt="githubImg"
-            />
-            <span 
-           
-            className="text-sm text-gray-900"> Sign in with Github</span>
-          </div>
-          <button
-            className="bg-black text-white text-base py-3 px-8 tracking0wide
-   rounded-md hover:bg-gray-800 duration-300"
-          >
-            Sign Out
-          </button>
-        </div>
-        <ToastContainer
-position = "top-left"
-autoCloase ={2000}
-hideProgressBar = {false}
-newestOnTop ={false}
-closeOnClick
-rtl={false}
-pauseOnFocusLoss
-draggable
-pauseOnHover
-theme="dark"
-/>
       </div>
-      <Footer />
+    </div>
+   
     </>
   );
 };

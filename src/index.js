@@ -9,11 +9,11 @@ import { BrowserRouter } from '../node_modules/react-router-dom/dist/index';
 import { Provider } from '../node_modules/react-redux/es/exports';
 import { persistor, store } from './redux/Store';
 import { PersistGate } from 'redux-persist/integration/react'
-import { app } from './firebase.config';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <Provider store={store} app={app}>
+  <Provider store={store} >
   <BrowserRouter>
   <React.StrictMode>
     <PersistGate loading={"loading"} persistor={persistor}>
